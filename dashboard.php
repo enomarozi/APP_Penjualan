@@ -1,5 +1,9 @@
 <?php
 session_start();
+if($_SESSION['login'] !== 1 && empty($_SESSION['username'])){
+    $_SESSION = [];
+    header("location: logout.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -57,7 +61,7 @@ session_start();
         icon: 'success',
         title: 'Berhasil!',
         text: '<?= $_SESSION['success']; ?>',
-        timer: 1800,
+        timer: 1500,
         showConfirmButton: false
     });
 </script>
@@ -71,9 +75,17 @@ session_start();
     	<img src="assets/images/spiderman.jpg" width="220" height="50" style="margin-right:10px; border-right:2px solid #ffffff; padding-right:10px;">
         <button class="btn btn-light btn-sm" id="toggleSidebar">☰</button>
         <div class="flex-grow-1"></div>
-        <button type="button" class="btn btn-link text-white text-decoration-none me-3">
-            Logout
-        </button>
+        <div class="dropdown me-3">
+            <a class="btn btn-link text-white text-decoration-none dropdown-toggle d-flex align-items-center p-0" 
+               href="#" role="button" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle" style="font-size: 2rem;"></i>  
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                <li><a class="dropdown-item" href="logout.php">Setting</a></li>
+                <li><a class="dropdown-item" href="logout.php">Logout</a></li>
+            </ul>
+        </div>
+
     </div>
 </nav>
 
@@ -127,6 +139,33 @@ session_start();
             header("Location: dashboard.php");
             exit();
         }
+
+        elseif(isset($_POST['submit']) && $_POST['submit'] === "update"){
+            $tanggal = $_POST['tanggal'];
+            $layanan_produk = $_POST['layanan_produk'];
+            $jenis = $_POST['jenis'];
+            $jumlah = $_POST['jumlah'];
+            $harga = $_POST['harga'];
+            $total = $_POST['total'];
+            $id = $_POST['id'];
+            $db->execute(
+                "UPDATE pembelian SET tanggal=?, layanan_produk=?, jenis=?, jumlah=?, harga=?, total=? WHERE id=?",
+                [$tanggal, $layanan_produk, $jenis, $jumlah, $harga, $total, $id]
+            );
+            $_SESSION['success'] = "Data Pembelian berhasil diupdate.";
+            header("Location: dashboard.php");
+            exit();
+        }
+
+        elseif(isset($_POST['submit']) && $_POST['submit'] === "hapus"){
+            $layanan_produk = $_POST['layanan_produk'];
+            $jenis = $_POST['jenis'];
+            $id = $_POST['id'];
+            $db->execute(
+                "DELETE FROM pembelian WHERE id=? AND layanan_produk=? AND jenis=?",
+                [$id, $layanan_produk, $jenis]
+            );
+        }
         $dataPembelian = $db->query("SELECT * FROM pembelian ORDER BY tanggal DESC");
     ?>
     <section id="content" class="flex-grow-1 p-4 mt-3">
@@ -164,10 +203,25 @@ session_start();
                                 <td><?= $row['jenis']; ?></td>
                                 <td><?= $row['jumlah']; ?></td>
                                 <td><?= "Rp ".number_format($row['harga'],0,',','.'); ?></td>
-                                <td><?= "Rp ".number_format($row['harga'],0,',','.'); ?></td>
+                                <td><?= "Rp ".number_format($row['total'],0,',','.'); ?></td>
                                 <td>
-                                    <button class="btn btn-warning btn-sm btn-edit" data-id="<?= $row['id']; ?>" data-bs-toggle="modal" data-bs-target="#modalEdit">Edit</button>
-                                    <button class="btn btn-danger btn-sm btn-hapus" data-id="<?= $row['id']; ?>" data-bs-toggle="modal" data-bs-target="#modalHapus">Hapus</button>
+                                    <button class="btn btn-warning btn-sm edit-btn" 
+                                        data-id="<?= $row['id']; ?>" 
+                                        data-tanggal="<?= date('Y-m-d', strtotime($row['tanggal'])); ?>"
+                                        data-layanan_produk="<?= $row['layanan_produk']; ?>"
+                                        data-jenis="<?= $row['jenis']; ?>"
+                                        data-jumlah="<?= $row['jumlah']; ?>"
+                                        data-harga="<?= $row['harga']; ?>"
+                                        data-total="<?= $row['total']; ?>"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modalEdit">Edit</button>
+                                    <button class="btn btn-danger btn-sm hapus-btn" 
+                                        data-id="<?= $row['id']; ?>"
+                                        data-tanggal="<?= date('Y-m-d', strtotime($row['tanggal'])); ?>"
+                                        data-layanan_produk="<?= $row['layanan_produk']; ?>"
+                                        data-jenis="<?= $row['jenis']; ?>"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#modalHapus">Hapus</button>
                                 </td>
                             </tr>
                             <?php endforeach; ?>
@@ -206,8 +260,43 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', function(){
+        const id = this.dataset.id;
+        const tanggal = this.dataset.tanggal;
+        const layanan = this.dataset.layanan_produk;
+        const jenis = this.dataset.jenis;
+        const jumlah = this.dataset.jumlah;
+        const harga = this.dataset.harga;
+        const total = this.dataset.total;
+
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_tanggal').value = tanggal;
+        document.getElementById('edit_layanan_produk').value = layanan;
+        document.getElementById('edit_jenis').value = jenis;
+        document.getElementById('edit_jumlah').value = jumlah;
+        document.getElementById('edit_harga').value = harga;
+        document.getElementById('edit_total').value = total;
+    });
+});
+
+document.querySelectorAll('.hapus-btn').forEach(btn =>{
+    btn.addEventListener('click', function(){
+        const id = this.dataset.id;
+        const tanggal = this.dataset.tanggal;
+        const layanan = this.dataset.layanan_produk;
+        const jenis = this.dataset.jenis;
+
+        document.getElementById('hapus_id').value = id;
+        document.getElementById('hapus_jenis').value = jenis;
+        document.getElementById('hapus_layanan_produk').value = layanan;
+        document.getElementById('pesan').innerHTML = `Apakah anda yakin ingin menghapus data <strong>${jenis} ${layanan}</strong> pada tanggal <strong>${tanggal}</strong>`;
+    })
+})
 </script>
 <?php include 'modals/tambah_data.php'; ?>
 <?php include 'modals/edit_data.php'; ?>
+<?php include 'modals/hapus_data.php'; ?>
 </body>
 </html>
