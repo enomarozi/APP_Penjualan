@@ -10,7 +10,7 @@
 
 <div class="card shadow" style="width: 22rem;">
     <div class="card-body">
-        <h4 class="card-title text-center mb-4">Login Aplikasi Penjualan</h4>
+        <h4 class="card-title text-center mb-4">Login Aplikasi Pembelian</h4>
 
         <form method="POST">
             <div class="mb-3">

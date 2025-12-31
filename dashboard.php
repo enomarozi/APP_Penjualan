@@ -73,7 +73,9 @@ if($_SESSION['login'] !== 1 && empty($_SESSION['username'])){
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid d-flex" style="padding: 0;">
     	<img src="assets/images/spiderman.jpg" width="220" height="50" style="margin-right:10px; border-right:2px solid #ffffff; padding-right:10px;">
-        <button class="btn btn-light btn-sm" id="toggleSidebar">☰</button>
+        <button class="btn btn-light btn-sm" id="toggleSidebar">
+            <i class="bi bi-list"></i>
+        </button>
         <div class="flex-grow-1"></div>
         <div class="dropdown me-3">
             <a class="btn btn-link text-white text-decoration-none dropdown-toggle d-flex align-items-center p-0" 
