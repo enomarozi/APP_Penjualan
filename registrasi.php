@@ -44,12 +44,11 @@
 							$password_hash = password_hash($password2 ,PASSWORD_DEFAULT);
 							$db->execute("INSERT INTO users (username, password) VALUES (?, ?)",[$username, $password_hash]);
 							$_SESSION['success'] = "Akun berhasil dibuat.";
-							header("Location: login.php");
 						}else{
-							$_SESSION['faled'] = "Username akun sudah ada.";
+							$_SESSION['failed'] = "Username akun sudah ada.";
 						}
 					}else{
-						$_SESSION['faled'] = "Panjangan Password min 8 dan harus sama dengan konfirmasi password.";
+						$_SESSION['failed'] = "Panjangan Password min 8 dan harus sama dengan konfirmasi password.";
 					}
 
 				}
