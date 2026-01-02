@@ -1,9 +1,9 @@
 <?php
 session_start();
-if($_SESSION['login'] !== 1 && empty($_SESSION['username'])){
-    $_SESSION = [];
-    header("location: logout.php");
-}
+// if($_SESSION['login'] !== 1 && empty($_SESSION['username'])){
+//     $_SESSION = [];
+//     header("location: logout.php");
+// }
 ?>
 <!DOCTYPE html>
 <html lang="id">
