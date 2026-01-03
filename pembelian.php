@@ -77,7 +77,6 @@ elseif(isset($_POST['submit']) && $_POST['submit'] === "update"){
             move_uploaded_file($fileTmp, $uploadDir . $newFileName);
             $foto = $newFileName;
 
-            // Optional: hapus foto lama
             $oldFoto = $db->query("SELECT foto FROM pembelian WHERE id=? LIMIT 1", [$id]);
             if($oldFoto && !empty($oldFoto[0]['foto']) && file_exists($uploadDir.$oldFoto[0]['foto'])){
                 unlink($uploadDir.$oldFoto[0]['foto']);
@@ -125,7 +124,7 @@ $dataPembelian = $db->query("SELECT * FROM pembelian ORDER BY tanggal DESC");
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard | Aplikasi Pembelian</title>
+    <title>Pembelian | Aplikasi Pembelian</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
@@ -185,13 +184,13 @@ $dataPembelian = $db->query("SELECT * FROM pembelian ORDER BY tanggal DESC");
     unset($_SESSION['success']);
     endif;
 ?>
+
 <?php include 'layouts/header.php'; ?>
 <div class="d-flex flex-grow-1 mt-5 position-relative">
     <?php include 'layouts/sidebar.php'; ?>
-    <?php include 'contents/dashboard.php'; ?>
+    <?php include 'contents/pembelian.php'; ?>
 </div>
 <?php include 'layouts/footer.php'; ?>
-
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -217,6 +216,78 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+
+document.querySelectorAll('.edit-btn').forEach(btn => {
+    btn.addEventListener('click', function(){
+        const id = this.dataset.id;
+        const tanggal = this.dataset.tanggal;
+        const layanan = this.dataset.layanan_produk;
+        const jenis = this.dataset.jenis;
+        const jumlah = this.dataset.jumlah;
+        const harga = this.dataset.harga;
+        const total = this.dataset.total;
+        const toko = this.dataset.toko;
+        const deskripsi = this.dataset.deskripsi;
+        const fotoSrc = this.closest('tr').querySelector('td img').src;
+
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_tanggal').value = tanggal;
+        document.getElementById('edit_layanan_produk').value = layanan;
+        document.getElementById('edit_jenis').value = jenis;
+        document.getElementById('edit_jumlah').value = jumlah;
+        document.getElementById('edit_harga').value = harga;
+        document.getElementById('edit_total').value = total;
+        document.getElementById('edit_toko').value = toko;
+        document.getElementById('edit_deskripsi').value = deskripsi;
+        document.getElementById('previewEditFoto').src = fotoSrc;
+        document.getElementById('previewEditFoto').style.display = 'block';
+    });
+});
+
+document.querySelectorAll('.details-btn').forEach(btn => {
+    btn.addEventListener('click', function(){
+        const id = this.dataset.id;
+        const tanggal = this.dataset.tanggal;
+        const layanan = this.dataset.layanan_produk;
+        const jenis = this.dataset.jenis;
+        const jumlah = this.dataset.jumlah;
+        const harga = this.dataset.harga;
+        const total = this.dataset.total;
+        const toko = this.dataset.toko;
+        const deskripsi = this.dataset.deskripsi;
+        const fotoSrc = this.closest('tr').querySelector('td img').src;
+
+        document.getElementById('details_id').value = id;
+        document.getElementById('details_tanggal').value = tanggal;
+        document.getElementById('details_layanan_produk').value = layanan;
+        document.getElementById('details_jenis').value = jenis;
+        document.getElementById('details_jumlah').value = jumlah;
+        document.getElementById('details_harga').value = harga;
+        document.getElementById('details_total').value = total;
+        document.getElementById('details_toko').value = toko;
+        document.getElementById('details_deskripsi').value = deskripsi;
+        document.getElementById('details_foto').src = fotoSrc;
+    });
+});
+
+
+document.querySelectorAll('.hapus-btn').forEach(btn =>{
+    btn.addEventListener('click', function(){
+        const id = this.dataset.id;
+        const tanggal = this.dataset.tanggal;
+        const layanan = this.dataset.layanan_produk;
+        const jenis = this.dataset.jenis;
+
+        document.getElementById('hapus_id').value = id;
+        document.getElementById('hapus_jenis').value = jenis;
+        document.getElementById('hapus_layanan_produk').value = layanan;
+        document.getElementById('pesan').innerHTML = `Apakah anda yakin ingin menghapus data <strong>${jenis} ${layanan}</strong> pada tanggal <strong>${tanggal}</strong>`;
+    })
+})
 </script>
+<?php include 'modals/tambah_data.php'; ?>
+<?php include 'modals/edit_data.php'; ?>
+<?php include 'modals/details_data.php'; ?>
+<?php include 'modals/hapus_data.php'; ?>
 </body>
 </html>
