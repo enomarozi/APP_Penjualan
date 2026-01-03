@@ -7,7 +7,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
-      <form id="formEdit" method="POST">
+      <form id="formEdit" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" id="edit_id">
         <div class="modal-body">
 
@@ -32,17 +32,33 @@
 
           <div class="mb-3">
             <label class="form-label">Jumlah</label>
-            <input type="number" name="jumlah" class="form-control" id="edit_jumlah" required>
+            <input type="number" name="jumlah" class="form-control" id="edit_jumlah" min="1" required>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Harga</label>
-            <input type="number" name="harga" class="form-control" id="edit_harga" required>
+            <input type="number" name="harga" class="form-control" id="edit_harga" min="0" required>
           </div>
 
           <div class="mb-3">
             <label class="form-label">Total</label>
-            <input type="number" name="total" class="form-control" id="edit_total" required>
+            <input type="number" name="total" class="form-control" id="edit_total" min="0" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Toko / Lokasi</label>
+            <input type="text" name="toko" class="form-control" id="edit_toko" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Deskripsi</label>
+            <textarea name="deskripsi" class="form-control" rows="3" id="edit_deskripsi" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Foto</label>
+            <input type="file" name="foto" class="form-control" accept="image/*" onchange="previewEditFoto(this)">
+            <img id="previewEditFoto" src="" alt="Preview Foto" style="width:120px; height:120px; object-fit:cover; margin-top:10px; display:none;">
           </div>
 
         </div>

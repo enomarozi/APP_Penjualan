@@ -1,12 +1,72 @@
+<?php
+session_start();
+require_once "koneksi.php";
+
+if (isset($_POST['registrasi'])) {
+    $username  = trim($_POST['username']);
+    $password1 = $_POST['password1'];
+    $password2 = $_POST['password2'];
+
+    if (strlen($password1) >= 8 && $password1 === $password2) {
+        $db = new Database();
+        $cek = $db->query(
+            "SELECT username FROM users WHERE username = ? LIMIT 1",
+            [$username]
+        );
+
+        if (!$cek) {
+            $password_hash = password_hash($password2, PASSWORD_DEFAULT);
+            $db->execute(
+                "INSERT INTO users (username, password) VALUES (?, ?)",
+                [$username, $password_hash]
+            );
+            $_SESSION['success'] = "Akun berhasil dibuat.";
+        } else {
+            $_SESSION['failed'] = "Username sudah terdaftar.";
+        }
+    } else {
+        $_SESSION['failed'] = "Password minimal 8 karakter dan harus sama.";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <title>Registrasi | Aplikasi Pembelian</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-success-subtle d-flex justify-content-center align-items-center vh-100">
+
+<body class="bg-success-subtle d-flex justify-content-center align-items-center min-vh-100">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<?php if (isset($_SESSION['success'])): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil!',
+        text: '<?= $_SESSION['success']; ?>',
+        timer: 1500,
+        showConfirmButton: false
+    });
+});
+</script>
+<?php unset($_SESSION['success']); endif; ?>
+
+<?php if (isset($_SESSION['failed'])): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+        icon: 'error',
+        title: 'Gagal!',
+        text: '<?= $_SESSION['failed']; ?>',
+        timer: 2000,
+        showConfirmButton: false
+    });
+});
+</script>
+<?php unset($_SESSION['failed']); endif; ?>
 
 <div class="card shadow" style="width: 22rem;">
     <div class="card-body">
@@ -15,69 +75,28 @@
         <form method="POST">
             <div class="mb-3">
                 <label class="form-label">Username</label>
-                <input type="text" class="form-control" name="username" value="admin" placeholder="Masukkan Username">
+                <input type="text" class="form-control" name="username" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Password</label>
-                <input type="password" class="form-control" name="password1" value="password" placeholder="Masukkan password">
+                <input type="password" class="form-control" name="password1" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Konfirmasi Password</label>
-                <input type="password" class="form-control" name="password2" value="password" placeholder="Konfirmasi Password">
+                <input type="password" class="form-control" name="password2" required>
             </div>
 
-            <button type="submit" class="btn btn-success w-100" name="registrasi" value="registrasi">
-                Login
+            <button type="submit" name="registrasi" class="btn btn-success w-100">
+                Registrasi
             </button>
-            <?php
-				require_once "koneksi.php";
-				if($_POST['registrasi'] === "registrasi"){
-					$username = $_POST['username'];
-					$password1 = $_POST['password1'];
-					$password2 = $_POST['password2'];
-					$db = new Database();
-					if(strlen($password1) == 8 && $password1 === $password2){
-						$cek = $db->query("SELECT username FROM users WHERE username=? LIMIT 1",[$username]);
-						if(!$cek){
-							$password_hash = password_hash($password2 ,PASSWORD_DEFAULT);
-							$db->execute("INSERT INTO users (username, password) VALUES (?, ?)",[$username, $password_hash]);
-							$_SESSION['success'] = "Akun berhasil dibuat.";
-						}else{
-							$_SESSION['failed'] = "Username akun sudah ada.";
-						}
-					}else{
-						$_SESSION['failed'] = "Panjangan Password min 8 dan harus sama dengan konfirmasi password.";
-					}
-
-				}
-			?>
+            <p class="text-center mt-3 mb-0">
+			    Sudah punya akun?
+			    <a href="login.php">Login di sini</a>
+			</p>
         </form>
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <?php if(isset($_SESSION['success'])): ?>
-			<script>
-			    Swal.fire({
-			        icon: 'success',
-			        title: 'Berhasil!',
-			        text: '<?= $_SESSION['success']; ?>',
-			        timer: 1500,
-			        showConfirmButton: false
-			    });
-			</script>
-		<?php unset($_SESSION['success']); ?>
-		<?php elseif (isset($_SESSION['failed'])): ?>
-			<script>
-		        Swal.fire({
-		            icon: 'error',
-		            title: 'Gagal!',
-		            text: '<?= $_SESSION['failed']; ?>',
-		            timer: 2000,
-		            showConfirmButton: false
-		        });
-		    </script>
-		<?php unset($_SESSION['failed']); ?> 
-		<?php endif; ?>
+
         <p class="text-center text-muted mt-3 mb-0" style="font-size: 13px;">
             © 2025 Aplikasi Pembelian
         </p>
