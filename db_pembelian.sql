@@ -1,7 +1,8 @@
 CREATE USER "admin"@"localhost" IDENTIFIED BY "password";
-CREATE DATABASE db_penjualan;
-GRANT ALL PRIVILEGES ON db_penjualan.* TO "admin"@"localhost";
+CREATE DATABASE db_pembelian;
+GRANT ALL PRIVILEGES ON db_pembelian.* TO "admin"@"localhost";
 FLUSH PRIVILEGES;
+USE db_pembelian;
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,

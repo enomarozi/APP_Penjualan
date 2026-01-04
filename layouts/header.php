@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
     <div class="container-fluid d-flex" style="padding: 0;">
-    	<img src="assets/images/spiderman.jpg" width="220" height="50" style="margin-right:10px; border-right:2px solid #ffffff; padding-right:10px;">
+    	<img src="assets/images/logo_mini1.png" width="220" height="50" style="margin-right:10px; border-right:2px solid #ffffff; padding-right:10px;">
         <button class="btn btn-light btn-sm" id="toggleSidebar">
             <i class="bi bi-list"></i>
         </button>

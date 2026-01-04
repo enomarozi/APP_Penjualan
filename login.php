@@ -54,7 +54,7 @@ if (isset($_POST["username"], $_POST["password"])) {
             </button>
             <p class="text-center mt-3 mb-0">
                 Belum punya akun?
-                <a href="login.php">Registrasi</a>
+                <a href="registrasi.php">Registrasi</a>
             </p>
         </form>
         <p class="text-center text-muted mt-3 mb-0" style="font-size: 13px;">
